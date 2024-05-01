@@ -1,25 +1,511 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.3.32825.248
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab4CSharp", "Lab4CSharp\Lab4CSharp.csproj", "{9ACA5B19-3B18-476F-A287-38A12C8DD1F7}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9ACA5B19-3B18-476F-A287-38A12C8DD1F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9ACA5B19-3B18-476F-A287-38A12C8DD1F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9ACA5B19-3B18-476F-A287-38A12C8DD1F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9ACA5B19-3B18-476F-A287-38A12C8DD1F7}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {F9960BC7-9E61-456D-A781-31257141F3DB}
-	EndGlobalSection
-EndGlobal
+Завдання 1
+using System;
+
+class DRomb
+{
+    private int d1;
+    private int d2;
+    private readonly int color;
+
+    public DRomb(int diagonal1, int diagonal2, int color)
+    {
+        d1 = diagonal1;
+        d2 = diagonal2;
+        this.color = color;
+    }
+
+    public void DisplayLengths()
+    {
+        Console.WriteLine($"Діагональ 1: {d1}");
+        Console.WriteLine($"Діагональ 2: {d2}");
+    }
+
+    public int CalculatePerimeter()
+    {
+        return 2 * (d1 + d2);
+    }
+
+    public double CalculateArea()
+    {
+        return 0.5 * d1 * d2;
+    }
+
+    public bool IsSquare()
+    {
+        return d1 == d2;
+    }
+
+    public int this[int index]
+    {
+        get
+        {
+            switch (index)
+            {
+                case 0:
+                    return d1;
+                case 1:
+                    return d2;
+                case 2:
+                    return color;
+                default:
+                    throw new IndexOutOfRangeException("Недійсний індекс");
+            }
+        }
+    }
+
+    public static DRomb operator ++(DRomb r)
+    {
+        r.d1++;
+        r.d2++;
+        return r;
+    }
+
+    public static DRomb operator --(DRomb r)
+    {
+        r.d1--;
+        r.d2--;
+        return r;
+    }
+
+    public static bool operator true(DRomb r)
+    {
+        return r.IsSquare();
+    }
+
+    public static bool operator false(DRomb r)
+    {
+        return !r.IsSquare();
+    }
+
+    public static DRomb operator +(DRomb r, int scalar)
+    {
+        r.d1 += scalar;
+        r.d2 += scalar;
+        return r;
+    }
+
+    public static explicit operator string(DRomb r)
+    {
+        return $"Діагональ 1: {r.d1}, Діагональ 2: {r.d2}, Колір: {r.color}";
+    }
+
+    public static explicit operator DRomb(string s)
+    {
+        string[] parts = s.Split(',');
+        int d1 = int.Parse(parts[0].Split(':')[1]);
+        int d2 = int.Parse(parts[1].Split(':')[1]);
+        int color = int.Parse(parts[2].Split(':')[1]);
+        return new DRomb(d1, d2, color);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        DRomb[] diamonds = new DRomb[]
+        {
+            new DRomb(5, 5, 1),
+            new DRomb(8, 12, 2),
+            new DRomb(6, 6, 3),
+            new DRomb(7, 7, 4)
+        };
+
+        int squareCount = 0;
+
+        foreach (var diamond in diamonds)
+        {
+            Console.WriteLine($"Інформація про ромб: {diamond}");
+            diamond.DisplayLengths();
+            Console.WriteLine($"Периметр: {diamond.CalculatePerimeter()}");
+            Console.WriteLine($"Площа: {diamond.CalculateArea()}");
+            if (diamond.IsSquare())
+            {
+                squareCount++;
+            }
+        }
+
+        Console.WriteLine($"Кількість квадратів: {squareCount}");
+    }
+}
+Завдання 2
+using System;
+
+class VectorULong
+{
+    protected ulong[] IntArray;
+    protected uint size;
+    protected int codeError;
+    protected static uint num_vec;
+
+    public uint Size { get { return size; } }
+    public int CodeError
+    {
+        get { return codeError; }
+        set { codeError = value; }
+    }
+
+    public VectorULong()
+    {
+        size = 1;
+        IntArray = new ulong[size];
+        codeError = 0;
+        num_vec++;
+    }
+
+    public VectorULong(uint size)
+    {
+        this.size = size;
+        IntArray = new ulong[size];
+        codeError = 0;
+        num_vec++;
+    }
+
+    public VectorULong(uint size, ulong initValue)
+    {
+        this.size = size;
+        IntArray = new ulong[size];
+        for (int i = 0; i < size; i++)
+        {
+            IntArray[i] = initValue;
+        }
+        codeError = 0;
+        num_vec++;
+    }
+
+    ~VectorULong()
+    {
+        Console.WriteLine("Деструктор вектора.");
+    }
+
+    public void Input()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            Console.Write($"Введіть елемент {i + 1}: ");
+            IntArray[i] = Convert.ToUInt64(Console.ReadLine());
+        }
+    }
+
+    public void Display()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            Console.WriteLine($"Елемент {i + 1}: {IntArray[i]}");
+        }
+    }
+
+    public void Assign(ulong value)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            IntArray[i] = value;
+        }
+    }
+
+    public static uint CountVectors()
+    {
+        return num_vec;
+    }
+
+    public ulong this[int index]
+    {
+        get
+        {
+            if (index >= 0 && index < size)
+            {
+                codeError = 0;
+                return IntArray[index];
+            }
+            else
+            {
+                codeError = -1;
+                return 0;
+            }
+        }
+        set
+        {
+            if (index >= 0 && index < size)
+            {
+                codeError = 0;
+                IntArray[index] = value;
+            }
+            else
+            {
+                codeError = -1;
+            }
+        }
+    }
+
+    public static VectorULong operator ++(VectorULong v)
+    {
+        for (int i = 0; i < v.size; i++)
+        {
+            v.IntArray[i]++;
+        }
+        return v;
+    }
+
+    public static VectorULong operator --(VectorULong v)
+    {
+        for (int i = 0; i < v.size; i++)
+        {
+            v.IntArray[i]--;
+        }
+        return v;
+    }
+
+    public static bool operator true(VectorULong v)
+    {
+        if (v.size == 0)
+        {
+            return false;
+        }
+        for (int i = 0; i < v.size; i++)
+        {
+            if (v.IntArray[i] == 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static bool operator false(VectorULong v)
+    {
+        if (v.size == 0)
+        {
+            return true;
+        }
+        for (int i = 0; i < v.size; i++)
+        {
+            if (v.IntArray[i] == 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static VectorULong operator +(VectorULong v, ulong scalar)
+    {
+        VectorULong result = new VectorULong(v.size);
+        for (int i = 0; i < v.size; i++)
+        {
+            result.IntArray[i] = v.IntArray[i] + scalar;
+        }
+        return result;
+    }
+
+    // Додаткові перевантаження операцій можна додати аналогічно
+}
+
+class Program
+{
+    static void Main()
+    {
+        VectorULong vec1 = new VectorULong(3, 5);
+        VectorULong vec2 = new VectorULong(3, 3);
+        VectorULong vec3 = new VectorULong(3, 0);
+
+        VectorULong vec4 = vec1 + 2;
+        VectorULong vec5 = vec2 + vec1[0];
+
+        Console.WriteLine($"Кількість векторів: {VectorULong.CountVectors()}");
+
+        Console.WriteLine("Елементи вектора vec4:");
+        vec4.Display();
+
+        Console.WriteLine("Елементи вектора vec5:");
+        vec5.Display();
+
+        Console.WriteLine($"Елемент за індексом 2 вектора vec1: {vec1[2]}");
+
+        Console.WriteLine($"Код помилки вектора vec2: {vec2.CodeError}");
+    }
+}
+Завдання 3
+using System;
+
+class MatrixUlong
+{
+    protected ulong[,] ULArray;
+    protected uint n, m;
+    protected int codeError;
+    protected static int num_m;
+
+    public uint Rows { get { return n; } }
+    public uint Columns { get { return m; } }
+    public int CodeError
+    {
+        get { return codeError; }
+        set { codeError = value; }
+    }
+
+    public MatrixUlong()
+    {
+        n = m = 1;
+        ULArray = new ulong[n, m];
+        codeError = 0;
+        num_m++;
+    }
+
+    public MatrixUlong(uint n, uint m)
+    {
+        this.n = n;
+        this.m = m;
+        ULArray = new ulong[n, m];
+        codeError = 0;
+        num_m++;
+    }
+
+    public MatrixUlong(uint n, uint m, ulong initValue)
+    {
+        this.n = n;
+        this.m = m;
+        ULArray = new ulong[n, m];
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                ULArray[i, j] = initValue;
+            }
+        }
+        codeError = 0;
+        num_m++;
+    }
+
+    ~MatrixUlong()
+    {
+        Console.WriteLine("Деструктор матриці.");
+    }
+
+    public void Input()
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                Console.Write($"Введіть елемент [{i}, {j}]: ");
+                ULArray[i, j] = Convert.ToUInt64(Console.ReadLine());
+            }
+        }
+    }
+
+    public void Display()
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                Console.Write($"{ULArray[i, j]} ");
+            }
+            Console.WriteLine();
+        }
+    }
+
+    public void Assign(ulong value)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                ULArray[i, j] = value;
+            }
+        }
+    }
+
+    public static int CountMatrices()
+    {
+        return num_m;
+    }
+
+    public ulong this[int i, int j]
+    {
+        get
+        {
+            if (i >= 0 && i < n && j >= 0 && j < m)
+            {
+                codeError = 0;
+                return ULArray[i, j];
+            }
+            else
+            {
+                codeError = -1;
+                return 0;
+            }
+        }
+        set
+        {
+            if (i >= 0 && i < n && j >= 0 && j < m)
+            {
+                codeError = 0;
+                ULArray[i, j] = value;
+            }
+            else
+            {
+                codeError = -1;
+            }
+        }
+    }
+
+    // Перевантажені оператори
+
+    public static MatrixUlong operator +(MatrixUlong matrix1, MatrixUlong matrix2)
+    {
+        if (matrix1.n != matrix2.n || matrix1.m != matrix2.m)
+        {
+            Console.WriteLine("Розміри матриць не співпадають.");
+            return matrix1; // або інша логіка, в залежності від ваших потреб
+        }
+
+        MatrixUlong result = new MatrixUlong(matrix1.n, matrix1.m);
+        for (int i = 0; i < matrix1.n; i++)
+        {
+            for (int j = 0; j < matrix1.m; j++)
+            {
+                result[i, j] = matrix1[i, j] + matrix2[i, j];
+            }
+        }
+        return result;
+    }
+
+    public static MatrixUlong operator *(MatrixUlong matrix, ulong scalar)
+    {
+        MatrixUlong result = new MatrixUlong(matrix.n, matrix.m);
+        for (int i = 0; i < matrix.n; i++)
+        {
+            for (int j = 0; j < matrix.m; j++)
+            {
+                result[i, j] = matrix[i, j] * scalar;
+            }
+        }
+        return result;
+    }
+
+    // Додаткові методи, властивості та перевантажені оператори можна додати аналогічно
+}
+
+class Program
+{
+    static void Main()
+    {
+        MatrixUlong matrix1 = new MatrixUlong(2, 2, 5);
+        MatrixUlong matrix2 = new MatrixUlong(2, 2, 3);
+
+        MatrixUlong matrix3 = matrix1 + matrix2;
+        MatrixUlong matrix4 = matrix1 * 2;
+
+        Console.WriteLine($"Кількість матриць: {MatrixUlong.CountMatrices()}");
+
+        Console.WriteLine("Елементи матриці matrix3:");
+        matrix3.Display();
+
+        Console.WriteLine("Елементи матриці matrix4:");
+        matrix4.Display();
+
+        Console.WriteLine($"Елемент [1, 1] матриці matrix1: {matrix1[1, 1]}");
+
+        Console.WriteLine($"Код помилки матриці matrix2: {matrix2.CodeError}");
+    }
+}
